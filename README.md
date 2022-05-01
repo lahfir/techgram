@@ -16,12 +16,12 @@
 
 ### Onboarding UI
 
-![Onboarding UI](https://raw.githubusercontent.com/itzpradip/react-native-firebase-social-app/master/assets/screenshots/onboarding-ui.png)
+![Onboarding UI](https://raw.githubusercontent.com/lahfir/techgram/master/assets/screenshots/onboarding-ui.png)
 
 ### Sign In UI
 
-![Sign in UI](https://raw.githubusercontent.com/itzpradip/react-native-firebase-social-app/master/assets/screenshots/social-login.png)
+![Sign in UI](https://raw.githubusercontent.com/lahfir/techgram/master/assets/screenshots/social-login.png)
 
 ### Home/Feed Screen UI
 
-![Home/Feed Screen UI](https://raw.githubusercontent.com/itzpradip/react-native-firebase-social-app/master/assets/screenshots/social-app-ui.png)
+![Home/Feed Screen UI](https://raw.githubusercontent.com/lahfir/techgram/master/assets/screenshots/social-app-ui.png)
