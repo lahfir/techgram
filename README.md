@@ -1,6 +1,6 @@
 # TechGram
 
-- # A creative way to network within your campus
+## A creative way to network within your campus
 
 ## Packages Used
 
