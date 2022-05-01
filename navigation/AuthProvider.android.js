@@ -157,8 +157,8 @@ export const AuthProvider = ({children}) => {
                       .collection('users')
                       .doc(auth().currentUser.uid)
                       .set({
+                        username: '',
                         fname: '',
-                        lname: '',
                         email: email,
                         createdAt: firestore.Timestamp.fromDate(new Date()),
                         userImg: null,
@@ -193,7 +193,6 @@ export const AuthProvider = ({children}) => {
         },
         logout: async () => {
           try {
-            AsyncStorage.clear();
             await auth().signOut();
           } catch (e) {
             console.log(e);

@@ -5,22 +5,27 @@ import {AuthContext} from './AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Routes = () => {
   const {user, setUser} = useContext(AuthContext);
   const [initializing, setInitializing] = useState(true);
 
-  const onAuthStateChanged = async (user) => {
-    await firestore()
-      .collection('users')
-      .doc(auth().currentUser.uid)
-      .get()
-      .then((documentSnapshot) => {
-        if (documentSnapshot.exists) {
-          // console.log('User Data', documentSnapshot.data());
-          setUser({...user._user, ...documentSnapshot.data()});
-        }
-      });
+  const onAuthStateChanged = async (userAuth) => {
+    try {
+      await firestore()
+        .collection('users')
+        .doc(userAuth.uid)
+        .get()
+        .then((documentSnapshot) => {
+          if (documentSnapshot.exists) {
+            // console.log('User Data', documentSnapshot.data());
+            setUser({...userAuth._user, ...documentSnapshot.data()});
+          }
+        });
+    } catch (e) {
+      console.log(e);
+    }
 
     if (initializing) setInitializing(false);
   };

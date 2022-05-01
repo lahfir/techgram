@@ -7,11 +7,13 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import {GoogleSignin} from '@react-native-community/google-signin';
+import signUpCompleteScreen from '../screens/signUpCompleteScreen';
 
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+  const [isSignUpFinished, setIsSignUpFinished] = useState(false);
   let routeName;
 
   useEffect(() => {
@@ -24,6 +26,15 @@ const AuthStack = () => {
       }
     }); // Add some error handling, also you can simply do setIsFirstLaunch(null)
 
+    AsyncStorage.getItem('signUpFinished').then((value) => {
+      if (value == null) {
+        AsyncStorage.setItem('signUpFinished', 'true'); // No need to wait for `setItem` to finish, although you might want to handle errors
+        setIsSignUpFinished(true);
+      } else {
+        setIsSignUpFinished(false);
+      }
+    });
+
     GoogleSignin.configure({
       webClientId: 'YOUR_APP_WEB_CLIENT_ID',
     });
@@ -31,6 +42,8 @@ const AuthStack = () => {
 
   if (isFirstLaunch === null) {
     return null; // This is the 'tricky' part: The query to AsyncStorage is not finished, but we have to present something to the user. Null will just render nothing, so you can also put a placeholder of some sort, but effectively the interval between the first mount and AsyncStorage retrieving your data won't be noticeable to the user. But if you want to display anything then you can use a LOADER here
+  } else if (!isSignUpFinished) {
+    routeName = 'SignUpComplete';
   } else if (isFirstLaunch == true) {
     routeName = 'Onboarding';
   } else {
@@ -70,6 +83,18 @@ const AuthStack = () => {
               />
             </View>
           ),
+        })}
+      />
+      <Stack.Screen
+        name="SignUpComplete"
+        component={signUpCompleteScreen}
+        options={({navigation}) => ({
+          title: 'Complete Signup',
+          headerStyle: {
+            backgroundColor: '#f9fafd',
+            shadowColor: '#f9fafd',
+            elevation: 0,
+          },
         })}
       />
     </Stack.Navigator>

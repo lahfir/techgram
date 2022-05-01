@@ -10,7 +10,6 @@ import {
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
-
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 
@@ -24,14 +23,17 @@ import {
 } from '../styles/AddPost';
 
 import {AuthContext} from '../navigation/AuthProvider';
+import {colors} from '../styles/colors';
+import {useNavigation} from '@react-navigation/native';
 
 const AddPostScreen = () => {
   const {user, logout} = useContext(AuthContext);
-
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [post, setPost] = useState(null);
+  const [caption, setCaption] = useState(null);
+  const [postType, setPostType] = useState(null);
+  const navigation = useNavigation();
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -58,19 +60,39 @@ const AddPostScreen = () => {
   };
 
   const submitPost = async () => {
+    if (caption === null || caption === '' || caption === undefined) {
+      Alert.alert('Warning', 'Please enter a caption');
+      return;
+    }
+
     const imageUrl = await uploadImage();
-    console.log('Image Url: ', imageUrl);
-    console.log('Post: ', post);
+
+    const db = firestore();
+    const ref = db.collection('posts').doc();
+    const postId = ref.id;
+
+    console.log(postId);
 
     firestore()
       .collection('posts')
-      .add({
-        userId: user.uid,
-        post: post,
+      .doc(postId.toString())
+      .set({
+        //Post Details
+        postId: postId,
+        caption: caption,
         postImg: imageUrl,
         postTime: firestore.Timestamp.fromDate(new Date()),
         likes: null,
         comments: null,
+        isLiked: false,
+        postType: postType, //Personal, Club, Event, Question
+
+        //User Details
+        userId: user.uid,
+        userImg: user.userImg,
+        username: user.username,
+        college: user.college.college,
+        collegeId: user.college.collegeId,
       })
       .then(() => {
         console.log('Post Added!');
@@ -79,7 +101,7 @@ const AddPostScreen = () => {
           'Your post has been published Successfully!',
         );
         navigation.navigate('Home');
-        setPost(null);
+        setCaption(null);
       })
       .catch((error) => {
         console.log(
@@ -127,10 +149,6 @@ const AddPostScreen = () => {
       setUploading(false);
       setImage(null);
 
-      // Alert.alert(
-      //   'Image uploaded!',
-      //   'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
-      // );
       return url;
     } catch (e) {
       console.log(e);
@@ -147,13 +165,13 @@ const AddPostScreen = () => {
           placeholder="What's on your mind?"
           multiline
           numberOfLines={4}
-          value={post}
-          onChangeText={(content) => setPost(content)}
+          value={caption}
+          onChangeText={(content) => setCaption(content)}
         />
         {uploading ? (
           <StatusWrapper>
-            <Text>{transferred} % Completed!</Text>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="small" color="black" />
+            <Text style={{marginLeft: 5}}>{transferred} % Completed!</Text>
           </StatusWrapper>
         ) : (
           <SubmitBtn onPress={submitPost}>
@@ -161,7 +179,7 @@ const AddPostScreen = () => {
           </SubmitBtn>
         )}
       </InputWrapper>
-      <ActionButton buttonColor="#2e64e5">
+      <ActionButton buttonColor={colors.primary}>
         <ActionButton.Item
           buttonColor="#9b59b6"
           title="Take Photo"

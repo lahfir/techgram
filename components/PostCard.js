@@ -29,8 +29,8 @@ const PostCard = ({item, onDelete, onPress}) => {
   const {user, logout} = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
 
-  likeIcon = item.liked ? 'heart' : 'heart-outline';
-  likeIconColor = item.liked ? colors.background : '#333';
+  likeIcon = item.isLiked ? 'heart' : 'heart-outline';
+  likeIconColor = item.isLiked ? colors.background : '#333';
 
   if (item.likes == 1) {
     likeText = '1 Like';
@@ -48,44 +48,41 @@ const PostCard = ({item, onDelete, onPress}) => {
     commentText = 'Comment';
   }
 
-  const getUser = async () => {
-    await firestore()
-      .collection('users')
-      .doc(item.userId)
-      .get()
-      .then((documentSnapshot) => {
-        if (documentSnapshot.exists) {
-          setUserData(documentSnapshot.data());
-        }
-      });
-  };
+  // const getUser = async () => {
+  //   await firestore()
+  //     .collection('users')
+  //     .doc(item.userId)
+  //     .get()
+  //     .then((documentSnapshot) => {
+  //       if (documentSnapshot.exists) {
+  //         setUserData(documentSnapshot.data());
+  //       }
+  //     });
+  // };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
 
   return (
-    <Card key={item.id}>
+    <Card key={item.postId}>
       <UserInfo>
         <UserImg
           source={{
-            uri: userData
-              ? userData.userImg ||
+            uri: item.userImg
+              ? item.userImg ||
                 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg'
               : 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg',
           }}
         />
         <UserInfoText>
           <TouchableOpacity onPress={onPress}>
-            <UserName>
-              {userData ? userData.fname || 'Test' : 'Test'}{' '}
-              {userData ? userData.lname : null}
-            </UserName>
+            <UserName>{item.username}</UserName>
           </TouchableOpacity>
           <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
         </UserInfoText>
       </UserInfo>
-      <PostText>{item.post}</PostText>
+      <PostText>{item.caption}</PostText>
       {/* {item.postImg != null ? <PostImg source={{uri: item.postImg}} /> : <Divider />} */}
       {item.postImg != null ? (
         <ProgressiveImage
@@ -99,9 +96,9 @@ const PostCard = ({item, onDelete, onPress}) => {
       )}
 
       <InteractionWrapper>
-        <Interaction active={item.liked}>
+        <Interaction active={item.isLiked}>
           <Ionicons name={likeIcon} size={25} color={likeIconColor} />
-          <InteractionText active={item.liked}>{likeText}</InteractionText>
+          <InteractionText active={item.isLiked}>{likeText}</InteractionText>
         </Interaction>
         <Interaction>
           <Ionicons name="md-chatbubble-outline" size={25} />

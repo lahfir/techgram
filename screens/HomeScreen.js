@@ -24,7 +24,7 @@ const Posts = [
     postTime: '4 mins ago',
     post: 'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/posts/post-img-3.jpg'),
-    liked: true,
+    isLiked: true,
     likes: '14',
     comments: '5',
   },
@@ -35,7 +35,7 @@ const Posts = [
     postTime: '2 hours ago',
     post: 'Hey there, this is my test for a post of my social app in React Native.',
     postImg: 'none',
-    liked: false,
+    isLiked: false,
     likes: '8',
     comments: '0',
   },
@@ -46,7 +46,7 @@ const Posts = [
     postTime: '1 hours ago',
     post: 'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/posts/post-img-2.jpg'),
-    liked: true,
+    isLiked: true,
     likes: '1',
     comments: '0',
   },
@@ -57,7 +57,7 @@ const Posts = [
     postTime: '1 day ago',
     post: 'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/posts/post-img-4.jpg'),
-    liked: true,
+    isLiked: true,
     likes: '22',
     comments: '4',
   },
@@ -68,7 +68,7 @@ const Posts = [
     postTime: '2 days ago',
     post: 'Hey there, this is my test for a post of my social app in React Native.',
     postImg: 'none',
-    liked: false,
+    isLiked: false,
     likes: '0',
     comments: '0',
   },
@@ -82,7 +82,7 @@ const HomeScreen = ({navigation}) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: user.college,
+      headerTitle: user.college.college.toUpperCase(),
     });
   }, []);
 
@@ -98,20 +98,35 @@ const HomeScreen = ({navigation}) => {
           // console.log('Total Posts: ', querySnapshot.size);
 
           querySnapshot.forEach((doc) => {
-            const {userId, post, postImg, postTime, likes, comments} =
-              doc.data();
-            list.push({
-              id: doc.id,
-              userId,
-              userName: 'Test Name',
-              userImg:
-                'https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg',
-              postTime: postTime,
-              post,
+            const {
+              postId,
+              caption,
               postImg,
-              liked: false,
+              postTime,
               likes,
               comments,
+              isLiked,
+              postType,
+              userId,
+              userImg,
+              username,
+              college,
+              collegeId,
+            } = doc.data();
+            list.push({
+              postId,
+              caption,
+              postImg,
+              postTime,
+              likes,
+              comments,
+              isLiked,
+              postType,
+              userId,
+              userImg,
+              username,
+              college,
+              collegeId,
             });
           });
         });
